@@ -1,4 +1,4 @@
-# Wordpress + Traefik + Let's Encrypt certificates using Docker
+# Wordpress + Traefik + Let's Encrypt certificates using Docker Swarm
 
 This repository is all you need to have your own Wordpress site (or sites) running behind [Traefik](https://docs.traefik.io/v1.0/) proxy with free autorenewal wildcard certificate from [Let's Encrypt](https://letsencrypt.org/). And all of it with the power of [Docker](https://www.docker.com/) and the scalability provided by [Docker Swarm](https://docs.docker.com/engine/swarm/).
 
