@@ -50,25 +50,25 @@ For more information visit:
 * Let's Encrypt configuration: https://docs.traefik.io/configuration/acme/
 
 ### `traefik-docker-compose.yml`
-This Compose file creates a container (or stack/service if using Swarm) with Traefik proxy running and listening on ports 80 and 443 - although all traffic on port 80 is redirected to port 443. Then, in turns, the traffic is redirected to the appropriate containers with the applications using the `labels`.
+[This Compose file](./traefik-docker-compose.yml) creates a container (or stack/service if using Swarm) with Traefik proxy running and listening on ports 80 and 443 - although all traffic on port 80 is redirected to port 443. Then, in turns, the traffic is redirected to the appropriate containers with the applications using the `labels`.
 
-Update the values for:
+Before running this file, update the values for:
 * Docker network.
 * Traefik labels.
 
-This file make the monitoring system of Traefik in the URL defined in the `traefik.frontend.rule` label via HTTPS.
+This file makes the monitoring UI available at the URL defined in the `traefik.frontend.rule` label via HTTPS.
 
 ### `yourwp-docker-compose.yml`
-This Compose file contains all the configuration required to create a container (or stack/service if using Swarm) with the selected version of Worpress.
+[This Compose file](yourwp-docker-compose.yml) contains all the configuration required to create a container (or stack/service if using Swarm) with the selected version of Worpress.
 
-Update the values for:
+Before running this file, update the values for:
 * Version of Worpress.
 * Wordpress environment.
 * Docker network, volumes and secrets.
 * Traefik labels.
 
 ### `acme.json`
-This empty file will contain the certificates generated from Let's Encrypt once the container have started. It needs specific file permissions for security so, once cloned, run:
+This empty file will contain the certificates generated from Let's Encrypt once the containers have started. It needs specific file permissions for security so, once cloned, run:
 
 ```bash
 sudo chmod 600 acme.json
