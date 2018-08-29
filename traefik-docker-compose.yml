@@ -1,0 +1,42 @@
+version: '3.6'
+
+# Create our containers.
+services:
+  # Traefik is a reverse proxy. It handles SSL and passes traffic to
+  # Docker containers via rules you define in docker-compose labels.
+  # Its dashboard is at https://subdomain.yourdomain.com (behind a login).
+  # Just create an A record that points to box that hosts this container.
+  traefik:
+    # https://hub.docker.com/_/traefik/
+    image: traefik:1.6
+    networks:
+      - proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Access to Docker
+      - ./traefik.toml:/traefik.toml              # Traefik configuration
+      - ./acme.json:/acme.json                    # SSL certificates
+    ports:
+      - "443:443"
+      - "80:80"
+    deploy:
+      restart_policy:
+        condition: any
+      mode: replicated
+      replicas: 1
+      update_config:
+        delay: 2s
+      placement:
+         constraints: [node.role == manager]
+      labels:
+        - "traefik.frontend.rule=Host:subdomain.yourdomain.com"
+        - "traefik.backend=<BACKEND_NAME>" # For simplicity, use "subdomain"
+        - "traefik.port=8080"
+        - "traefik.enable=true"
+        - "traefik.docker.network=<YOUR_NETWORK>"
+
+# Create a network before using this file:
+# Local env (dev): 'docker create network <YOUR_NETWORK>', i.e. <YOUR_NETWORK>=proxy
+# Swarm env (prod): 'docker create network --driver overlay <YOUR_NETWORK>'
+networks:
+  <YOUR_NETWORK>:
+    external: true

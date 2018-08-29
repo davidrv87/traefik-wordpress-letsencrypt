@@ -1,0 +1,55 @@
+# Full info at https://docs.traefik.io/v1.0/toml/
+
+# Traefik will listen for traffic on both HTTP and HTTPS.
+defaultEntryPoints=["http", "https"]
+
+# Set the logging level
+logLevel="INFO" # ERROR, WARNING, INFO, DEBUG
+
+# Access to dashboard interface.
+# This will be a separate web app running within the Traefik container on port 8080.
+# However, this is reacheable on port 443
+[api]
+# For simplicity, use the same name given to the subdomain (see traefik-docker-compose.yml)
+entrypoint="subdomain"
+
+# Network traffic will be entering our Docker network on the usual web ports
+# (ie, 80 and 443), where Traefik will be listening.
+[entryPoints]
+  [entryPoints.http]
+    address=":80"
+    [entryPoints.http.redirect]
+      entryPoint="https"
+  [entryPoints.https]
+    address=":443"
+    [entryPoints.https.tls]
+  # Health/monitor entrypoint
+  [entryPoints.subdomain]
+    address=":8080"
+      [entryPoints.subdomain.auth.basic]
+        # Generate MD5 by running 'htpasswd -n <YOUR_USER>', ie 'htpasswd -n admin'
+        # Multiple users can be used separating them with commas
+        users=["<YOUR_MD5_PASSWORD>"]
+
+# Enable Docker backend
+[docker]
+endpoint="unix:///var/run/docker.sock"
+domain="localhost"
+watch=true
+swarmmode=true
+exposedbydefault=false
+
+# These options are for Traefik's integration with Let's Encrypt.
+# Your certificates are stored inside /acme.json inside the container,
+# which is ./acme.json on your server.
+[acme]
+email="<YOUR_EMAIL>"
+storage="acme.json"
+entryPoint="https"
+OnHostRule=true
+  [acme.dnsChallenge]
+    provider="<YOUR_PROVIDER>" # i.e. "route53"
+[[acme.domains]]
+  # Generate wildcard. Note that you MUST have a CAA record in your
+  # DNS provider with the following value: 0 issuewild "letsencrypt.org"
+  main="*.yourdomain.com"

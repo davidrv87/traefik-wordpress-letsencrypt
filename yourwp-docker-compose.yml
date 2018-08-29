@@ -1,0 +1,40 @@
+version: '3.6'
+
+services:
+  wordpress:
+    # https://hub.docker.com/_/wordpress/
+    image: wordpress:<VERSION>
+    networks:
+      - <YOUR_NETWORK>
+    environment:
+      WORDPRESS_DB_HOST: <YOUR_DB_HOST>
+      WORDPRESS_DB_NAME: <YOUR_DB_NAME>
+      WORDPRESS_TABLE_PREFIX: <YOUR_TABLE_PREFIX>
+      WORDPRESS_DB_USER: <ROOT_USER>
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/<YOUR_SECRET> # For local dev, WORDPRESS_DB_PASSWORD can be used instead
+    volumes:
+      - <YOUR_NAMED_VOLUME>:/var/www/html # To persist WP data between restarts
+    secrets:
+      - <YOUR_SECRET>
+    deploy: # Note that this is ignored when using docker-compose locally
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      labels:
+        - "traefik.docker.network=<YOUR_NETWORK>"
+        - "traefik.port=80" # The port the application is listening on
+        - "traefik.frontend.rule=Host:yourapp.yourdomain.com"
+        - "traefik.enable=true" # Set to true to expose the container and make it visible
+
+volumes:
+  <YOUR_NAMED_VOLUME>:
+
+networks:
+  <YOUR_NETWORK>:
+    external: true
+
+secrets:
+  <YOUR_SECRET>:
+    external: true
