@@ -14,6 +14,7 @@ services:
       WORDPRESS_DB_PASSWORD_FILE: /run/secrets/<YOUR_SECRET> # For local dev, WORDPRESS_DB_PASSWORD can be used instead
     volumes:
       - <YOUR_NAMED_VOLUME>:/var/www/html # To persist WP data between restarts
+      - ./php.ini:/var/www/html/php.ini
     secrets:
       - <YOUR_SECRET>
     deploy: # Note that this is ignored when using docker-compose locally
