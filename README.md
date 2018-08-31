@@ -108,5 +108,15 @@ The following blogs are have been powered as described above:
 * [Travel Everwanderer](https://travel.everwanderer.com).
 * [Tech Everwanderer](https://tech.everwanderer.com).
 
+## FAQ
+### Let's Encrypt won't issue a certificate
+You need to make sure that your DNS provider, i.e. Route53, has a CAA record to allow Let's Encrypt to issue a certificate. In this case, as we are using a wildcard certificate, make sure to create CAA record with the following value.
+
+```
+0 issuewild letsencrypt.org
+```
+
+For full info visit https://letsencrypt.org/docs/caa/
+
 ## License
 Code copyright 2018. Code released under [the MIT License](./LICENSE.txt).
